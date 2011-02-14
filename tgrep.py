@@ -25,6 +25,34 @@ class lineDate:
         else:
             return self.hour
 
+    def __lt__(self, other):
+        pass
+    def __gt__(self, other):
+        pass
+    def __eq__(self, other): 
+        if self.hour == other.hour:
+            if self.minute == None or other.minute == None:
+                return True
+            elif self.minute == other.minute:
+                if self.second == None or other.second == None or self.second == other.second:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+class inputDate(lineDate):
+    def __init__(self, date_line):
+        dates = date_line.split('-')
+        self.date1 = lineDate(dates[0])
+        try:
+            self.date2 = lineDate(dates[1])
+        except IndexError:
+            self.date2 = None
+
+
 if __name__ == "__main__":
     search = None
     filename = "sample.log" #default
@@ -51,10 +79,7 @@ if __name__ == "__main__":
     file = open(filename, "r")
 
     for line in file:
-        print line
         ld = lineDate(line)
-        print ld.hour
-        print ld.minute
-        print ld.second
+        if(ld == search):
+            print line
 
-    print search
