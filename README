@@ -1,0 +1,7 @@
+$ tgrep 8:42:04
+[log lines with that precise timestamp]
+$ tgrep 10:01
+[log lines with timestamps between 10:01:00 and 10:01:59]
+$ tgrep 23:59-0:03
+[log lines between 23:59:00 and 0:03:59]
+
