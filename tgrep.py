@@ -17,14 +17,37 @@ class lineDate:
             if self.hour == None:
                 raise TypeError("Not a parsable date")
 
+    def __str__(self):
+        if self.second != None:
+            return ":".join([self.hour, self.minute, self.second])
+        elif self.minute != None:
+            return ":".join([self.hour, self.minute])
+        else:
+            return self.hour
+
 if __name__ == "__main__":
+    search = None
+    filename = "sample.log" #default
     try:
         arg1 = sys.argv[1]
+    except IndexError:
+        raise Exception("I need at least a timestamp to look for")
+    try:
         arg2 = sys.argv[2]
     except IndexError:
-        pass
+        arg2 = None
 
-    filename = arg1
+    try:
+        search = lineDate(arg1)
+        if arg2 != None:
+            filename = arg2
+    except TypeError:
+        if arg2 != None:
+            search = lineDate(arg2)
+            filename = arg1
+        else:
+            raise Exception("I need at least a timestamp to look for")
+
     file = open(filename, "r")
 
     for line in file:
@@ -33,3 +56,5 @@ if __name__ == "__main__":
         print ld.hour
         print ld.minute
         print ld.second
+
+    print search
