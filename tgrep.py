@@ -1,5 +1,6 @@
 import sys
 import re
+from os.path import getsize
 class lineDate:
     def __init__(self, date_line):
         self.line = date_line
@@ -58,6 +59,20 @@ class lineDate:
         else:
             return False
 
+def findDate(file, filesize, currentPosition, search):
+    file.seek(currentPosition)
+    file.readline()
+    testdate = lineDate(file.readline())
+    print testdate
+
+    if testdate < search:
+        currentPosition = (filesize - currentPosition) / 2
+    elif testdate > search:
+        currentPosition = currentPosition / 2
+
+    return findDate(file, filesize, currentPosition, search)
+
+    
 if __name__ == "__main__":
     search = None
     range = False
@@ -107,14 +122,9 @@ if __name__ == "__main__":
                     raise Exception("I need at least a timestamp to look for")
 
     file = open(filename, "r")
+    filesize = getsize(filename)
+    current = filesize / 2
 
-    for line in file:
-        ld = lineDate(line)
-        if range:
-            if(ld > start and ld < end):
-                print line
-        else:
-            if(ld > search):
-                print line
+    findDate(file, filesize, current, search)
 
-    print search
+
