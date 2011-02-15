@@ -59,7 +59,7 @@ class lineDate:
         else:
             return False
 
-def findDate(file, filesize, currentPosition, search):
+def findDate(file, filesize, currentPosition, search, linearThresh):
     file.seek(currentPosition)
     file.readline()
     testdate = lineDate(file.readline())
@@ -124,7 +124,8 @@ if __name__ == "__main__":
     file = open(filename, "r")
     filesize = getsize(filename)
     current = filesize / 2
+    linearThreshHold = filesize / 100
 
-    findDate(file, filesize, current, search)
+    findDate(file, filesize, current, search, linearThreshHold)
 
 
