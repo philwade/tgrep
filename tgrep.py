@@ -7,8 +7,8 @@ class lineDate:
         self.minute = None
         self.second = None
         try:
-            matches = re.search('(?P<hour>[0-9]{2}):?', self.line)
-            self.hour = matches.group('hour')
+            matches = re.search('^([0-9]{2}):?| ([0-9]{2}):', self.line)
+            self.hour = matches.group(1) or matches.group(2)
             matches = re.search('[0-9]{2}:(?P<minute>[0-9]{2}):?', self.line)
             self.minute = matches.group('minute')
             matches = re.search('[0-9]{2}:[0-9]{2}:(?P<second>[0-9]{2})', self.line)
