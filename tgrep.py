@@ -58,15 +58,26 @@ class lineDate:
         else:
             return False
 
-class inputDate(lineDate):
+class searchRange:
     def __init__(self, date_line):
         dates = date_line.split('-')
-        self.date1 = lineDate(dates[0])
-        try:
-            self.date2 = lineDate(dates[1])
-        except IndexError:
-            self.date2 = None
-
+        self.start = lineDate(dates[0])
+        self.end = lineDate(dates[1])
+    def __gt__(self, other):
+        if self.start > other:
+            return True
+        else:
+            return False
+    def __lt__(self, other):
+        if self.end < other:
+            return True
+        else:
+            return False
+    def __eq__(self, other):
+        if self.start < other and self.end > other:
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
     search = None
@@ -81,15 +92,24 @@ if __name__ == "__main__":
         arg2 = None
 
     try:
-        search = lineDate(arg1)
+        search = searchRange(arg1)
         if arg2 != None:
             filename = arg2
-    except TypeError:
-        if arg2 != None:
-            search = lineDate(arg2)
+    except IndexError:
+        try:
+            search = searchRange(arg2)
             filename = arg1
-        else:
-            raise Exception("I need at least a timestamp to look for")
+        except (IndexError, AttributeError):
+            try:
+                search = lineDate(arg1)
+                if arg2 != None:
+                    filename = arg2
+            except TypeError:
+                if arg2 != None:
+                    search = lineDate(arg2)
+                    filename = arg1
+                else:
+                    raise Exception("I need at least a timestamp to look for")
 
     file = open(filename, "r")
 
