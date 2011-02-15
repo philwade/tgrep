@@ -58,29 +58,9 @@ class lineDate:
         else:
             return False
 
-class searchRange:
-    def __init__(self, date_line):
-        dates = date_line.split('-')
-        self.start = lineDate(dates[0])
-        self.end = lineDate(dates[1])
-    def __gt__(self, other):
-        if self.start > other:
-            return True
-        else:
-            return False
-    def __lt__(self, other):
-        if self.end < other:
-            return True
-        else:
-            return False
-    def __eq__(self, other):
-        if self.start < other and self.end > other:
-            return True
-        else:
-            return False
-
 if __name__ == "__main__":
     search = None
+    range = False
     filename = "sample.log" #default
     try:
         arg1 = sys.argv[1]
@@ -92,14 +72,29 @@ if __name__ == "__main__":
         arg2 = None
 
     try:
-        search = searchRange(arg1)
-        if arg2 != None:
-            filename = arg2
+        dates = arg1.split('-')
+        start = lineDate(dates[0])
+        end = lineDate(dates[1])
+        range = True
     except IndexError:
-        try:
-            search = searchRange(arg2)
-            filename = arg1
-        except (IndexError, AttributeError):
+        if arg2 != None:
+            try:
+                dates = arg2.split('-')
+                start = lineDate(dates[0])
+                end = lineDate(dates[1])
+                range = True
+            except IndexError:
+                try:
+                    search = lineDate(arg1)
+                    if arg2 != None:
+                        filename = arg2
+                except TypeError:
+                    if arg2 != None:
+                        search = lineDate(arg2)
+                        filename = arg1
+                    else:
+                        raise Exception("I need at least a timestamp to look for")
+        else:
             try:
                 search = lineDate(arg1)
                 if arg2 != None:
@@ -115,7 +110,11 @@ if __name__ == "__main__":
 
     for line in file:
         ld = lineDate(line)
-        if(ld > search):
-            print line
+        if range:
+            if(ld > start and ld < end):
+                print line
+        else:
+            if(ld > search):
+                print line
 
     print search
