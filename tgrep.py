@@ -26,9 +26,24 @@ class lineDate:
             return self.hour
 
     def __lt__(self, other):
-        pass
+        if self.hour < other.hour:
+            return True
+        elif self.hour == other.hour:
+            if self.minute == None or self.minute < other.minute:
+                return True
+            elif self.minute == other.minute:
+                if self.second == None or self.second < other.second: 
+                    return True 
+                else: 
+                    return False
+            else:
+                return False
+        else:
+            return False
+
     def __gt__(self, other):
-        pass
+        return not self.__lt__(other)
+
     def __eq__(self, other): 
         if self.hour == other.hour:
             if self.minute == None or other.minute == None:
@@ -80,6 +95,7 @@ if __name__ == "__main__":
 
     for line in file:
         ld = lineDate(line)
-        if(ld == search):
+        if(ld > search):
             print line
 
+    print search
