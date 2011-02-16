@@ -59,18 +59,48 @@ class lineDate:
         else:
             return False
 
-def findDate(file, filesize, currentPosition, search, linearThresh):
-    file.seek(currentPosition)
-    file.readline()
-    testdate = lineDate(file.readline())
-    print testdate
+class seeker:
+    def __init__(self, filename, search):
+        self.file = open(filename, "r")
+        self.fileEnd = getsize(filename)
+        self.fileStart = 0
+        self.linearThreshHold = 1000
+        self.search = search
 
-    if testdate < search:
-        currentPosition = (filesize - currentPosition) / 2
-    elif testdate > search:
-        currentPosition = currentPosition / 2
+    def seekDateBetween(self, start=None, end=None):
+        if start == None:
+            start = self.fileStart
+        if end == None:
+            end = self.fileEnd
+        searchsize = end - start
+        if searchsize > self.linearThreshHold:
+            pivot = (end - start) / 2
+            self.file.seek(pivot)
+            self.file.readline() #throw away read because we won't get a full line
+            testdate = lineDate(self.file.readline())
+            print testdate
 
-    return findDate(file, filesize, currentPosition, search)
+            if testdate < search:
+                return self.seekDateBetween(pivot, end)
+            elif testdate > search:
+                return self.seekDateBetween(start, pivot)
+        else:
+            self.linearSearch(start, end)
+
+    def linearSearch(self, start, end):
+        match = False
+        self.file.seek(start)
+        self.file.readline() #get a fresh line when we start looping
+        while self.file.tell() < end:
+            line = self.file.readline()
+            test = lineDate(line)
+            if test == self.search:
+               print line 
+               match = True
+            else:
+                if match:
+                    return
+            
 
     
 if __name__ == "__main__":
@@ -121,11 +151,6 @@ if __name__ == "__main__":
                 else:
                     raise Exception("I need at least a timestamp to look for")
 
-    file = open(filename, "r")
-    filesize = getsize(filename)
-    current = filesize / 2
-    linearThreshHold = filesize / 100
 
-    findDate(file, filesize, current, search, linearThreshHold)
-
-
+    hp = seeker(filename, search)
+    hp.seekDateBetween()
