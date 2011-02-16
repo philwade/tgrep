@@ -60,7 +60,11 @@ class lineDate:
             return False
 
 class seeker:
-    def __init__(self, filename, search):
+    def __init__(self, filename, search, searchEnd=None):
+        self.range = False
+        if searchEnd != None:
+            self.range = True
+            self.searchEnd = searchEnd
         self.file = open(filename, "r")
         self.fileEnd = getsize(filename)
         self.fileStart = 0
@@ -81,9 +85,9 @@ class seeker:
             testdate = lineDate(self.file.readline())
             print testdate
 
-            if testdate < search:
+            if self.lessThanSearch(testdate):
                 return self.seekDateBetween(pivot, end)
-            elif testdate > search:
+            elif self.greaterThanSearch(testdate):
                 return self.seekDateBetween(start, pivot)
         else:
             self.linearSearch(start, end)
@@ -96,14 +100,34 @@ class seeker:
         while looking:
             line = self.file.readline()
             test = lineDate(line)
-            if test == self.search:
-               print line 
+            if self.equalSearch(test):
+               print line,
                matched = True
             elif matched:
                 looking = False
+
+    def lessThanSearch(self, testdate):
+        return testdate < self.search
+
+    def greaterThanSearch(self, testdate):
+        if self.range:
+            return testdate > self.searchEnd
+        else:
+            return testdate > self.search
+
+    def equalSearch(self, testdate):
+        if self.range:
+            if testdate < self.searchEnd and testdate > self.search:
+                return True
+        else:
+            if testdate == self.search:
+                return True
+        return False
+
     
 if __name__ == "__main__":
     search = None
+    end = None
     range = False
     filename = "sample.log" #default
     try:
@@ -117,16 +141,14 @@ if __name__ == "__main__":
 
     try:
         dates = arg1.split('-')
-        start = lineDate(dates[0])
+        search = lineDate(dates[0])
         end = lineDate(dates[1])
-        range = True
     except (IndexError, TypeError):
         if arg2 != None:
             try:
                 dates = arg2.split('-')
-                start = lineDate(dates[0])
+                search = lineDate(dates[0])
                 end = lineDate(dates[1])
-                range = True
             except (IndexError, TypeError):
                 try:
                     search = lineDate(arg1)
@@ -151,5 +173,5 @@ if __name__ == "__main__":
                     raise Exception("I need at least a timestamp to look for")
 
 
-    hp = seeker(filename, search)
+    hp = seeker(filename, search, end)
     hp.seekDateBetween()

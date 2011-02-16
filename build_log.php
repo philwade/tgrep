@@ -11,7 +11,7 @@ $current = $start;
 while($current < $end)
 {
     $randRoute = $routes[array_rand($routes)];
-    $randTimeStep = rand(0, 1);
+    $randTimeStep = rand(0, 0.06);
     $current += $randTimeStep;
     $randTimeString = date("M d H:i:s", $current);
     echo sprintf($requestString, $randTimeString, $randRoute);
