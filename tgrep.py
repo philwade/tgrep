@@ -73,8 +73,9 @@ class seeker:
         if end == None:
             end = self.fileEnd
         searchsize = end - start
+        print start, end
         if searchsize > self.linearThreshHold:
-            pivot = (end - start) / 2
+            pivot = (end - start) / 2 + start
             self.file.seek(pivot)
             self.file.readline() #throw away read because we won't get a full line
             testdate = lineDate(self.file.readline())
@@ -88,20 +89,18 @@ class seeker:
             self.linearSearch(start, end)
 
     def linearSearch(self, start, end):
-        match = False
+        looking = True
+        matched = False
         self.file.seek(start)
         self.file.readline() #get a fresh line when we start looping
-        while self.file.tell() < end:
+        while looking:
             line = self.file.readline()
             test = lineDate(line)
             if test == self.search:
                print line 
-               match = True
-            else:
-                if match:
-                    return
-            
-
+               matched = True
+            elif matched:
+                looking = False
     
 if __name__ == "__main__":
     search = None
@@ -121,14 +120,14 @@ if __name__ == "__main__":
         start = lineDate(dates[0])
         end = lineDate(dates[1])
         range = True
-    except IndexError:
+    except (IndexError, TypeError):
         if arg2 != None:
             try:
                 dates = arg2.split('-')
                 start = lineDate(dates[0])
                 end = lineDate(dates[1])
                 range = True
-            except IndexError:
+            except (IndexError, TypeError):
                 try:
                     search = lineDate(arg1)
                     if arg2 != None:
