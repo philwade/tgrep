@@ -124,6 +124,14 @@ class seeker:
                 return True
         return False
 
+def parseDateArg(arg):
+    end = None
+    dates = arg.split('-')
+    search = lineDate(dates[0])
+    if len(dates) == 2:
+        end = lineDate(dates[1])
+    return search, end
+    
     
 if __name__ == "__main__":
     search = None
@@ -140,38 +148,15 @@ if __name__ == "__main__":
         arg2 = None
 
     try:
-        dates = arg1.split('-')
-        search = lineDate(dates[0])
-        end = lineDate(dates[1])
-    except (IndexError, TypeError):
-        if arg2 != None:
-            try:
-                dates = arg2.split('-')
-                search = lineDate(dates[0])
-                end = lineDate(dates[1])
-            except (IndexError, TypeError):
-                try:
-                    search = lineDate(arg1)
-                    if arg2 != None:
-                        filename = arg2
-                except TypeError:
-                    if arg2 != None:
-                        search = lineDate(arg2)
-                        filename = arg1
-                    else:
-                        raise Exception("I need at least a timestamp to look for")
+        search, end = parseDateArg(arg1)
+        if arg1 != None: 
+            filename = arg2
+    except TypeError: #arg1 is not a date of any type
+        if arg2 == None: #we got no dates i guess, fail hard
+            raise Exception("I need at least a timestamp to look for")
         else:
-            try:
-                search = lineDate(arg1)
-                if arg2 != None:
-                    filename = arg2
-            except TypeError:
-                if arg2 != None:
-                    search = lineDate(arg2)
-                    filename = arg1
-                else:
-                    raise Exception("I need at least a timestamp to look for")
-
+            search, end = parseDateArg(arg2)
+            filename = arg1
 
     hp = seeker(filename, search, end)
     hp.seekDateBetween()

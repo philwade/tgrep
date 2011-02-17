@@ -4,7 +4,7 @@ use strict;
 
 my $start_time =  6 * 3600 + 52 * 60; # 6:52am
 my $end_time   = 31 * 3600 + 13 * 60; # 7:13am the next day
-my $avg_step   = 3600;
+my $avg_step   = 0.008;
 
 my $t = $start_time;
 while($t <= $end_time) {

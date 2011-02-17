@@ -10,9 +10,14 @@ $requestString = "%s web03 \"GET %s\"\n";
 $current = $start;
 while($current < $end)
 {
-    $randRoute = $routes[array_rand($routes)];
-    $randTimeStep = rand(0, 0.06);
+    $randTimeStep = rand(0, 1);
     $current += $randTimeStep;
-    $randTimeString = date("M d H:i:s", $current);
-    echo sprintf($requestString, $randTimeString, $randRoute);
+    $iterationsOnSecond = rand(10, 100);
+
+    for($i = 0; $i < $iterationsOnSecond;$i++)
+    {
+        $randRoute = $routes[array_rand($routes)];
+        $randTimeString = date("M d H:i:s", $current);
+        echo sprintf($requestString, $randTimeString, $randRoute);
+    }
 }
