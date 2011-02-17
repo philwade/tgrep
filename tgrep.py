@@ -1,12 +1,15 @@
 import sys
 import re
 from os.path import getsize
+DEBUG = True
+
 class lineDate:
     def __init__(self, date_line):
         self.line = date_line
         self.hour = None
         self.minute = None
         self.second = None
+        self.zeroThreshold = "12" #pivot number where decide to think of 00 as 0 or 24...
         try:
             matches = re.search('^([0-9]{2}):?| ([0-9]{2}):', self.line)
             self.hour = matches.group(1) or matches.group(2)
@@ -16,7 +19,7 @@ class lineDate:
             self.second = matches.group('second')
         except AttributeError:
             if self.hour == None:
-                raise TypeError("Not a parsable date")
+                raise TypeError("Not a parsable date: %s" % self.line)
 
     def __str__(self):
         if self.second != None:
@@ -27,9 +30,19 @@ class lineDate:
             return self.hour
 
     def __lt__(self, other):
-        if self.hour < other.hour:
+        selfHourValue = self.hour
+        otherHourValue = other.hour
+        if other.hour == "00":
+            if self.hour > self.zeroThreshold:
+                otherHourValue = "24"
+
+        if self.hour == "00":
+            if other.hour > self.zeroThreshold:
+                selfHourValue = "24"
+
+        if selfHourValue < otherHourValue:
             return True
-        elif self.hour == other.hour:
+        elif selfHourValue == otherHourValue:
             if self.minute == None or self.minute < other.minute:
                 return True
             elif self.minute == other.minute:
@@ -62,6 +75,7 @@ class lineDate:
 class seeker:
     def __init__(self, filename, search, searchEnd=None):
         self.range = False
+        self.debug = True
         if searchEnd != None:
             self.range = True
             self.searchEnd = searchEnd
@@ -77,13 +91,18 @@ class seeker:
         if end == None:
             end = self.fileEnd
         searchsize = end - start
-        print start, end
+        if DEBUG:
+            print "DEBUG: ", start, end
         if searchsize > self.linearThreshHold:
             pivot = (end - start) / 2 + start
             self.file.seek(pivot)
             self.file.readline() #throw away read because we won't get a full line
-            testdate = lineDate(self.file.readline())
-            print testdate
+            testline = self.file.readline()
+            testdate = lineDate(testline)
+            if DEBUG:
+                print "DEBUG: ", testline
+            if self.equalSearch(testdate):
+                return self.linearSearch(start, end) #in case we land in the middle of our search
 
             if self.lessThanSearch(testdate):
                 return self.seekDateBetween(pivot, end)
@@ -97,7 +116,7 @@ class seeker:
         matched = False
         self.file.seek(start)
         self.file.readline() #get a fresh line when we start looping
-        while looking:
+        while looking and self.file.tell() < end:
             line = self.file.readline()
             test = lineDate(line)
             if self.equalSearch(test):
@@ -105,6 +124,10 @@ class seeker:
                matched = True
             elif matched:
                 looking = False
+        if matched:
+            return True
+        else:
+            return False
 
     def lessThanSearch(self, testdate):
         return testdate < self.search
@@ -117,7 +140,7 @@ class seeker:
 
     def equalSearch(self, testdate):
         if self.range:
-            if testdate < self.searchEnd and testdate > self.search:
+            if testdate < self.searchEnd and testdate > self.search or testdate == self.search or testdate == self.searchEnd:
                 return True
         else:
             if testdate == self.search:
@@ -136,7 +159,6 @@ def parseDateArg(arg):
 if __name__ == "__main__":
     search = None
     end = None
-    range = False
     filename = "sample.log" #default
     try:
         arg1 = sys.argv[1]
@@ -149,7 +171,7 @@ if __name__ == "__main__":
 
     try:
         search, end = parseDateArg(arg1)
-        if arg1 != None: 
+        if arg2 != None: 
             filename = arg2
     except TypeError: #arg1 is not a date of any type
         if arg2 == None: #we got no dates i guess, fail hard
