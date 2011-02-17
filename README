@@ -1,7 +1,25 @@
-$ tgrep 8:42:04
-[log lines with that precise timestamp]
-$ tgrep 10:01
-[log lines with timestamps between 10:01:00 and 10:01:59]
-$ tgrep 23:59-0:03
-[log lines between 23:59:00 and 0:03:59]
+Hey Guys,
 
+I've implemented tgrep for you in Python, along with a script in PHP to build a reasonable approximation of a log (you'll notice the log includes some of my favorite subreddits).
+I chose PHP because I use it in my day job, and because of the date building tools, the script took about ten minutes to write. I also used raldi's perl script for some of my sample data.
+I picked python because I like to code in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in a timely manner. 
+Maybe that's a project for me to do later.
+
+I used a binary search mostly, tweaking along the way to handle the edge cases I could think of.
+
+It does pretty well against grep, with an advantage on larger files. I'm curious to see how it runs up against your logs
+
+[snpxw@PWadeiMAC:reddit_log ]$ time python tgrep.py 07:10:10 sample4.log #sample4.log is ~570M
+[ search results ... ]
+real    0m0.160s
+user    0m0.023s
+sys     0m0.015s
+[snpxw@PWadeiMAC:reddit_log ]$ time grep 07:10:10 sample4.log
+[ search results ... ]
+real    0m5.465s
+user    0m0.334s
+sys     0m0.344s
+
+Some of the edge cases and their handling:
+
+Midnight crossings where where a bit of a problem. It seems "00" can be thought of as both actually "00" and "24" - to get around this, I check what number I'm checking against. Numbers greater than 12, you can expect 00 to appear after them in a binary search, so they think of 00 as 24. Otherwise, it is evaluated as 00.
