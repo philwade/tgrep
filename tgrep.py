@@ -83,19 +83,44 @@ class seeker:
         self.fileEnd = getsize(filename)
         self.fileStart = 0
         self.firstDate = lineDate(self.file.readline())
+        self.file.seek(self.fileEnd - 200)
+        self.file.readline() 
+        self.lastDate = lineDate(self.file.readline())
+        if DEBUG:
+            print "First: ", self.firstDate, " Last: ", self.lastDate
         self.linearThreshHold = 1000
         self.search = search
+        self.firstPivot = self.fileEnd / 2
+        self.searchBothHalves = False
+        self.checkHalves()
+
+    def checkHalves(self): #see if we need to check both halves
+        if self.range:
+            if self.search < self.firstDate and self.searchEnd > self.lastDate \
+            or self.search < self.firstDate and self.searchEnd > self.firstDate \
+            or self.search > self.firstDate and self.searchEnd < self.lastDate:
+                if DEBUG:
+                    print "DEBUG: range that spans both halves"
+                self.searchBothHalves = True
+        else:
+            if self.search < self.lastDate and self.search > self.firstDate:
+                if DEBUG:
+                    print "DEBUG: value that spans both halves"
+                self.searchBothHalves = True
 
     def seekDateBetween(self, start=None, end=None):
-        if start == None:
+        if start == None and end == None:
             start = self.fileStart
-        if end == None:
             end = self.fileEnd
+            if self.searchBothHalves:
+                self.seekDateBetween(self.fileStart, self.firstPivot)
+                self.seekDateBetween(self.firstPivot, self.fileEnd)
+                return
         searchsize = end - start
+        pivot = (end - start) / 2 + start
         if DEBUG:
             print "DEBUG: ", start, end
         if searchsize > self.linearThreshHold:
-            pivot = (end - start) / 2 + start
             self.file.seek(pivot)
             self.file.readline() #throw away read because we won't get a full line
             testline = self.file.readline()
@@ -131,7 +156,7 @@ class seeker:
             return False
 
     def lessThanSearch(self, testdate):
-        if self.search < self.firstDate and testdate > self.firstDate:
+        if self.search < self.firstDate and testdate > self.firstDate and not self.range:
             return True
         else:
             return testdate < self.search
