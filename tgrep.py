@@ -137,6 +137,8 @@ class seeker:
         else:
             self.linearSearch(start, end)
 
+    def seekBack(self):
+        pass
     def linearSearch(self, start, end):
         looking = True
         matched = False
@@ -156,6 +158,8 @@ class seeker:
             return False
 
     def lessThanSearch(self, testdate):
+        if self.range:
+            return testdate < self.search and testdate < self.searchEnd
         if self.search < self.firstDate and testdate > self.firstDate and not self.range:
             return True
         else:
