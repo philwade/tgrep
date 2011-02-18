@@ -82,6 +82,7 @@ class seeker:
         self.file = open(filename, "r")
         self.fileEnd = getsize(filename)
         self.fileStart = 0
+        self.firstDate = lineDate(self.file.readline())
         self.linearThreshHold = 1000
         self.search = search
 
@@ -130,13 +131,19 @@ class seeker:
             return False
 
     def lessThanSearch(self, testdate):
-        return testdate < self.search
+        if self.search < self.firstDate and testdate > self.firstDate:
+            return True
+        else:
+            return testdate < self.search
 
     def greaterThanSearch(self, testdate):
         if self.range:
             return testdate > self.searchEnd
         else:
-            return testdate > self.search
+            if self.search < self.firstDate and testdate > self.firstDate:
+                return False
+            else:
+                return testdate > self.search
 
     def equalSearch(self, testdate):
         if self.range:

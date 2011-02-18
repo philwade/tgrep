@@ -23,3 +23,5 @@ sys     0m0.344s
 Some of the edge cases and their handling:
 
 Midnight crossings where where a bit of a problem. It seems "00" can be thought of as both actually "00" and "24" - to get around this, I check what number I'm checking against. Numbers greater than 12, you can expect 00 to appear after them in a binary search, so they think of 00 as 24. Otherwise, it is evaluated as 00.
+
+Dates that were less than the start date but appeared later in the log were annoying (and I realized pretty late they were a problem). I had to let the search class know about the first date to do proper finding.
