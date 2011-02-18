@@ -98,7 +98,8 @@ class seeker:
         if self.range:
             if self.search < self.firstDate and self.searchEnd > self.lastDate \
             or self.search < self.firstDate and self.searchEnd > self.firstDate \
-            or self.search > self.firstDate and self.searchEnd < self.lastDate:
+            or self.search > self.firstDate and self.searchEnd < self.lastDate \
+            or self.search < self.firstDate:
                 if DEBUG:
                     print "DEBUG: range that spans both halves"
                 self.searchBothHalves = True
