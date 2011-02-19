@@ -159,12 +159,13 @@ class seeker:
             return False
 
     def lessThanSearch(self, testdate):
-        if self.range:
-            return testdate < self.search and testdate < self.searchEnd
         if self.search < self.firstDate and testdate > self.firstDate and not self.range:
             return True
         else:
-            return testdate < self.search
+            if self.range and self.search.hour > self.searchEnd.hour:
+                return testdate < self.searchEnd
+            else:
+                return testdate < self.search
 
     def greaterThanSearch(self, testdate):
         if self.range:
