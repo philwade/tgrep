@@ -99,6 +99,7 @@ class seeker:
             if self.search < self.firstDate and self.searchEnd > self.lastDate \
             or self.search < self.firstDate and self.searchEnd > self.firstDate \
             or self.search > self.firstDate and self.searchEnd < self.lastDate \
+            or self.search < self.lastDate or self.search == self.lastDate and self.searchEnd > self.lastDate \
             or self.search < self.firstDate:
                 if DEBUG:
                     print "DEBUG: range that spans both halves"
@@ -138,8 +139,11 @@ class seeker:
         else:
             self.linearSearch(start, end)
 
-    def seekBack(self):
-        pass
+    def seekBack(self, start, end): 
+        while True:
+            break
+        return self.linearSearch(start, end)
+
     def linearSearch(self, start, end):
         looking = True
         matched = False
