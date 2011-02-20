@@ -136,6 +136,8 @@ class seeker:
                 return self.seekDateBetween(pivot, end)
             elif self.greaterThanSearch(testdate):
                 return self.seekDateBetween(start, pivot)
+            else:
+                print "something terrible has happened"
         else:
             self.linearSearch(start, end)
 
@@ -163,7 +165,7 @@ class seeker:
             return False
 
     def lessThanSearch(self, testdate):
-        if self.search < self.firstDate and testdate > self.firstDate and not self.range:
+        if self.search < self.firstDate and testdate > self.lastDate and not self.range:
             return True
         else:
             if self.range and self.search.hour > self.searchEnd.hour:
@@ -175,7 +177,7 @@ class seeker:
         if self.range:
             return testdate > self.searchEnd
         else:
-            if self.search < self.firstDate and testdate > self.firstDate:
+            if self.search < self.firstDate and testdate > self.lastDate:
                 return False
             else:
                 return testdate > self.search
