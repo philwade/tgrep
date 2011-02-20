@@ -89,6 +89,7 @@ class seeker:
         if DEBUG:
             print "First: ", self.firstDate, " Last: ", self.lastDate
         self.linearThreshHold = 1000
+        self.backStep = 72
         self.search = search
         self.firstPivot = self.fileEnd / 2
         self.searchBothHalves = False
@@ -131,7 +132,7 @@ class seeker:
             if DEBUG:
                 print "DEBUG: ", testline
             if self.equalSearch(testdate):
-                return self.linearSearch(start, end) #in case we land in the middle of our search
+                return self.linearSearch(start, end, True) #in case we land in the middle of our search
 
             if self.lessThanSearch(testdate):
                 return self.seekDateBetween(pivot, end)
@@ -142,16 +143,33 @@ class seeker:
         else:
             self.linearSearch(start, end)
 
-    def seekBack(self, start, end): 
+    def seekBack(self):
         while True:
-            break
-        return self.linearSearch(start, end)
+            current = self.file.tell()
+            newPlace = current - (self.backStep * 2)
+            if newPlace < 0:
+                break
+            self.file.seek(newPlace)
+            self.file.readline()
+            test = lineDate(self.file.readline())
+            if DEBUG:
+                print "DEBUG: jump back date: ", test
+            if not self.equalSearch(test):
+                break
+        newStart = self.file.tell()
+        newStart = newStart - self.backStep
+        return newStart
 
-    def linearSearch(self, start, end):
+    def linearSearch(self, start, end, landedOn=False):
+        if landedOn:
+            start = self.seekBack()
+        if DEBUG:
+            print "DEBUG: Linear searching between ", start, " ", end 
         looking = True
         matched = False
         self.file.seek(start)
-        self.file.readline() #get a fresh line when we start looping
+        if start != 0:
+            self.file.readline() #get a fresh line when we start looping
         while looking and self.file.tell() < end:
             line = self.file.readline()
             test = lineDate(line)
