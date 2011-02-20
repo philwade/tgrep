@@ -105,7 +105,8 @@ class seeker:
                     print "DEBUG: range that spans both halves"
                 self.searchBothHalves = True
         else:
-            if self.search < self.lastDate and self.search > self.firstDate:
+            if self.search < self.lastDate and self.search > self.firstDate \
+            or self.search == self.lastDate or self.search == self.firstDate:
                 if DEBUG:
                     print "DEBUG: value that spans both halves"
                 self.searchBothHalves = True
