@@ -1,27 +1,27 @@
 Hey Guys,
 
-I've implemented tgrep for you in Python, along with a script in PHP to build a reasonable approximation of a log (you'll notice the log includes some of my favorite subreddits).
+I've implemented tgrep for you in Python, along with a script in PHP to build a reasonable approximation of a log.
 I chose PHP because I use it in my day job, and because of the date building tools, the script took about ten minutes to write. I also used raldi's perl script for some of my sample data.
-I picked python because I like to code in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in a timely manner. 
+I picked python because I like to code in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in anything like a timely manner. 
 Maybe that's a project for me to do later.
 
-I used a binary search mostly, tweaking along the way to handle the edge cases I could think of.
+I used a binary search, with a special implementation of less than and greater than that depends on the first, last and midpoint values of the file.
+It took me a while to write (probably too long), but mainly because I got stuck in the woods trying to handle weird edge cases. Everything went to spaghetti and I tore out my value determination stuff and started over.
+As is the way of things, once everything was more properly factored and clean, going was quick, and a lot of the edge cases seemed to solve themselves. I can't find that aren't covered at the moment.
+The only part that is still vaguely gross is the part where I figure out if I should be searching the first or second half of the file or both. 
+I've probably erred on the side of checking both halves too often, but my thinking is it might even be safest to just check them both all the time.
 
-It does pretty well against grep, with an advantage on larger files. I'm curious to see how it runs up against your logs
+It does pretty well against grep, with an advantage on larger files. I'm curious to see how it runs against your logs.
+(sample4.log is ~570M)
 
-[snpxw@PWadeiMAC:reddit_log ]$ time python tgrep.py 07:10:10 sample4.log #sample4.log is ~570M
+[snpxw@PWadeiMAC:reddit_log ]$ time python tgrep.py 00:10:54 sample4.log
 [ search results ... ]
-real    0m0.160s
-user    0m0.023s
-sys     0m0.015s
-[snpxw@PWadeiMAC:reddit_log ]$ time grep 07:10:10 sample4.log
+real    0m0.143s
+user    0m0.025s
+sys     0m0.014s
+
+[snpxw@PWadeiMAC:reddit_log ]$ time grep 00:10:54 sample4.log
 [ search results ... ]
-real    0m5.465s
-user    0m0.334s
-sys     0m0.344s
-
-Some of the edge cases and their handling:
-
-Midnight crossings where where a bit of a problem. It seems "00" can be thought of as both actually "00" and "24" - to get around this, I check what number I'm checking against. Numbers greater than 12, you can expect 00 to appear after them in a binary search, so they think of 00 as 24. Otherwise, it is evaluated as 00.
-
-Dates that were less than the start date but appeared later in the log were annoying (and I realized pretty late they were a problem). I had to let the search class know about the first date to do proper finding.
+real    0m8.676s
+user    0m0.324s
+sys     0m0.394s

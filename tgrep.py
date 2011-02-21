@@ -1,7 +1,7 @@
 import sys
 import re
 from os.path import getsize
-DEBUG = True
+DEBUG = False
 
 class lineDate:
     def __init__(self, date_line):
