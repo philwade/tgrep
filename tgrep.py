@@ -233,7 +233,7 @@ class seeker:
 
     def equalSearch(self, testdate):
         if self.range:
-            if testdate < self.searchEnd and testdate > self.search or testdate == self.search or testdate == self.searchEnd:
+            if self.lessThanValue(testdate, self.searchEnd) and self.greaterThanValue(testdate, self.search) or testdate == self.search or testdate == self.searchEnd:
                 return True
         else:
             if testdate == self.search:
