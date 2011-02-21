@@ -227,7 +227,7 @@ class seeker:
 
     def greaterThanSearch(self, testdate):
         if self.range:
-            return self.greaterThanValue(testdate, self.searchEnd)
+            return self.greaterThanValue(testdate, self.search)
         else:
             return self.greaterThanValue(testdate, self.search)
 
