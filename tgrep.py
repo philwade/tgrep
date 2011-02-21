@@ -254,7 +254,7 @@ def parseDateArg(arg):
 if __name__ == "__main__":
     search = None
     end = None
-    filename = "sample.log" #default
+    filename = "/logs/haproxy.log" #default
     try:
         arg1 = sys.argv[1]
     except IndexError:
