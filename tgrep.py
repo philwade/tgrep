@@ -146,7 +146,7 @@ class seeker:
     def seekBack(self):
         while True:
             current = self.file.tell()
-            newPlace = current - (self.backStep * 2)
+            newPlace = current - (self.backStep * 20)
             if newPlace < 0:
                 break
             self.file.seek(newPlace)
