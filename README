@@ -1,6 +1,6 @@
 Hey Guys,
 
-I've implemented tgrep for you in Python, along with a script in PHP to build a reasonable approximation of a log.
+I've implemented tgrep for you in Python (2.6.2), along with a script in PHP to build a reasonable approximation of a log.
 I chose PHP because I use it in my day job, and because of the date building tools, the script took about ten minutes to write. I also used raldi's perl script for some of my sample data.
 I picked python because I like to code in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in anything like a timely manner. 
 Maybe that's a project for me to do later.
@@ -15,13 +15,13 @@ It does pretty well against grep, with an advantage on larger files. I'm curious
 (sample4.log is ~570M)
 
 [snpxw@PWadeiMAC:reddit_log ]$ time python tgrep.py 00:10:54 sample4.log
-[ search results ... ]
+( search results ... )
 real    0m0.143s
 user    0m0.025s
 sys     0m0.014s
 
 [snpxw@PWadeiMAC:reddit_log ]$ time grep 00:10:54 sample4.log
-[ search results ... ]
+( search results ... )
 real    0m8.676s
 user    0m0.324s
 sys     0m0.394s
