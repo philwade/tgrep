@@ -1,7 +1,7 @@
 import sys
 import re
 from os.path import getsize
-DEBUG = False
+DEBUG = True
 
 class lineDate:
     def __init__(self, date_line):
@@ -11,11 +11,13 @@ class lineDate:
         self.second = None
         self.zeroThreshold = "12" #pivot number where decide to think of 00 as 0 or 24...
         try:
-            matches = re.search('^([0-9]{2}):?| ([0-9]{2}):', self.line)
+            matches = re.search('^([0-9]{1,2}):?| ([0-9]{2}):', self.line)
             self.hour = matches.group(1) or matches.group(2)
-            matches = re.search('[0-9]{2}:(?P<minute>[0-9]{2}):?', self.line)
+            if len(self.hour) == 1:
+                self.hour = "0" + self.hour
+            matches = re.search('[0-9]{1,2}:(?P<minute>[0-9]{2}):?', self.line)
             self.minute = matches.group('minute')
-            matches = re.search('[0-9]{2}:[0-9]{2}:(?P<second>[0-9]{2})', self.line)
+            matches = re.search('[0-9]{1,2}:[0-9]{2}:(?P<second>[0-9]{2})', self.line)
             self.second = matches.group('second')
         except AttributeError:
             if self.hour == None:
