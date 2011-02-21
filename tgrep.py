@@ -58,6 +58,12 @@ class lineDate:
     def __gt__(self, other):
         return not self.__lt__(other)
 
+    def __gte__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
+
+    def __lte__(self, other):
+        return self.__lt__(other) or self.__eq__(other)
+
     def __eq__(self, other): 
         if self.hour == other.hour:
             if self.minute == None or other.minute == None:
@@ -92,6 +98,9 @@ class seeker:
         self.backStep = 72
         self.search = search
         self.firstPivot = self.fileEnd / 2
+        self.file.seek(self.firstPivot)
+        self.file.readline() 
+        self.midDate = lineDate(self.file.readline())
         self.searchBothHalves = False
         self.checkHalves()
 
@@ -148,6 +157,7 @@ class seeker:
             current = self.file.tell()
             newPlace = current - (self.backStep * 20)
             if newPlace < 0:
+                return 0
                 break
             self.file.seek(newPlace)
             self.file.readline()
@@ -183,23 +193,43 @@ class seeker:
         else:
             return False
 
-    def lessThanSearch(self, testdate):
-        if self.search < self.firstDate and testdate > self.lastDate and not self.range:
+    def lessThanValue(self, testdate, search):
+        if (search > self.firstDate or search == self.firstDate) and (search < self.lastDate or search == self.lastDate):
+            if testdate < self.midDate:
+                return testdate < search
+            else:
+                return True
+        elif testdate < self.firstDate and search > self.firstDate:
+            return False
+        elif testdate > self.firstDate and search < self.firstDate:
             return True
         else:
-            if self.range and self.search.hour > self.searchEnd.hour:
-                return testdate < self.searchEnd
+            return testdate < search
+
+    def lessThanSearch(self, testdate):
+        if self.range:
+            return self.lessThanValue(testdate, self.search)
+        else:
+            return self.lessThanValue(testdate, self.search)
+
+    def greaterThanValue(self, testdate, search):
+        if (search > self.firstDate or search == self.firstDate) and (search < self.lastDate or search == self.lastDate):
+            if testdate < self.midDate:
+                return testdate > search
             else:
-                return testdate < self.search
+                return False
+        elif testdate < self.firstDate and search > self.firstDate:
+            return True
+        elif testdate > self.firstDate and search < self.firstDate:
+            return False
+        else:
+            return testdate > search
 
     def greaterThanSearch(self, testdate):
         if self.range:
-            return testdate > self.searchEnd
+            return self.greaterThanValue(testdate, self.searchEnd)
         else:
-            if self.search < self.firstDate and testdate > self.lastDate:
-                return False
-            else:
-                return testdate > self.search
+            return self.greaterThanValue(testdate, self.search)
 
     def equalSearch(self, testdate):
         if self.range:
