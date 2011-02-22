@@ -1,15 +1,14 @@
 Hey Guys,
 
-I've implemented tgrep for you in Python (2.6.2), along with a script in PHP to build a reasonable approximation of a log.
-I chose PHP because I use it in my day job, and because of the date building tools, the script took about ten minutes to write. I also used raldi's perl script for some of my sample data.
-I picked python because I like to code in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in anything like a timely manner. 
+I've implemented tgrep for you in Python (2.6), along with a script in PHP to build a reasonable approximation of a log.
+I chose PHP because I use it in my day job, and it has some nice date building functionality. I also used raldi's perl script for some of my sample data.
+As for the python, I just enjoying coding in it. I thought C might be faster, but I wanted to turn this around fairly quickly, and my knowledge of C is not complete enough to code this up in anything like a timely manner. 
 Maybe that's a project for me to do later.
 
 I used a binary search, with a special implementation of less than and greater than that depends on the first, last and midpoint values of the file.
-It took me a while to write (probably too long), but mainly because I got stuck in the woods trying to handle weird edge cases. Everything went to spaghetti and I tore out my value determination stuff and started over.
+It took me a while to write (probably too long), mostly because I got stuck in the woods trying to handle weird edge cases. Everything went to spaghetti and I tore out my value determination stuff and started over.
 As is the way of things, once everything was more properly factored and clean, going was quick, and a lot of the edge cases seemed to solve themselves. I can't find that aren't covered at the moment.
 The only part that is still vaguely gross is the part where I figure out if I should be searching the first or second half of the file or both. 
-I've probably erred on the side of checking both halves too often, but my thinking is it might even be safest to just check them both all the time.
 
 It does pretty well against grep, with an advantage on larger files. I'm curious to see how it runs against your logs.
 (sample4.log is ~570M)
@@ -27,6 +26,7 @@ user    0m0.324s
 sys     0m0.394s
 
 Thanks for checking it out!
+Phil
 
 Contact:
 My reddit username is pivotal and you can send me an email at phil@philwade.org
