@@ -1,3 +1,4 @@
+#tgrep.py by phil wade (phil@philwade.org) 
 import sys
 import re
 from os.path import getsize
