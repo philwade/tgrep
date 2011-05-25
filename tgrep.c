@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <regex.h>
 
 typedef struct line_date {
     int hour;
@@ -9,13 +10,14 @@ typedef struct line_date {
 int main(void)
 {
     lineDate date;
-    buildLineDate(date);
-    printf("%i", date.hour);
     char newTime[] = "10:10:10";
+
+    buildLineDate(&date, newTime);
+    printf("%i \n", date.hour);
     return 0;
 }
 
-int buildLineDate(lineDate *time)
+int buildLineDate(lineDate* time, char timeString[])
 {
     time->hour = 5;
     return 0;
