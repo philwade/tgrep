@@ -10,9 +10,9 @@ typedef struct line_date {
 int main(void)
 {
     lineDate date;
-    char *pattern = "10:10:10111(1111)";
+    char *pattern = "([0-9]{1,2}):([0-9]{2}):([0-9]{2})";
     regex_t re;
-    regmatch_t matches[2];
+    regmatch_t matches[4];
 
     if(regcomp(&re, pattern, REG_EXTENDED) != 0)
     {
@@ -20,16 +20,20 @@ int main(void)
         return 1;
     }
 
-    char *newTime = "10:10:101111111";
+    char *newTime = "10:11:12";
 
-    if(regexec(&re, newTime, 2, matches, 0) != 0)
+    if(regexec(&re, newTime, 4, matches, 0) != 0)
     {
         printf("Failed to match regex");
         return 1;
     }
     else
     {
-        printf("%.*s", (int)(matches[1].rm_eo - matches[1].rm_so), &newTime[matches[1].rm_so]);
+        int i;
+        for(i = 1;i < 4;i++)
+        {
+            printf("%.*s\n", (int)(matches[i].rm_eo - matches[i].rm_so), &newTime[matches[i].rm_so]);
+        }
     }
     buildLineDate(&date, newTime);
     //printf("%i \n", date.hour);
