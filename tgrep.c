@@ -32,15 +32,6 @@ int main(int argc, char* argv[])
 
     char *newTime = "10:11";
 
-    if(isRange(argv[1], &rangeOffset) != 0)
-    {
-       printf("%s is a range, dash at %i", argv[1], rangeOffset); 
-    }
-    else
-    {
-       printf("%s is not a range", argv[1]); 
-    }
-
     if(regexec(&re, newTime, 4, matches, 0) != 0)
     {
         printf("Failed to match regex");
@@ -75,22 +66,24 @@ int buildLineDate(lineDate* time, char* inputTimeString)
     }
     else
     {
+        //make sure we're a date at all
     }
-    time->hour = 5;
+    time;
     free(firstDate);
     free(secondDate);
     return 0;
 }
 
-int parseDate(lineDate* time, char* timeString)
+lineDate parseDate(char* timeString)
 {
-    return 0;
+    lineDate myDate;
+    return myDate;
 }
 
 int isRange(char* inputTime, int* offset)
 {
     int i;
-    for(i = 0;i < sizeof inputTime;i++)
+    for(i = 0;i < strlen(inputTime);i++)
     {
         if(*(inputTime + i) == '-')
         {
