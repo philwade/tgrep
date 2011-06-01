@@ -10,6 +10,45 @@ typedef struct lineDate {
     struct lineDate* secondDate;
 } lineDate;
 
+int matchAndParseInt(char* timeString, char* timePattern)
+{
+    regex_t re;
+    regmatch_t matches[2];
+
+    if(regcomp(&re, timePattern, REG_EXTENDED) != 0)
+    {
+        printf("Failed to compile regex");
+    }
+
+
+    if(regexec(&re, timeString, 2, matches, 0) == 0)
+    {
+        int matchSize = (int)(matches[1].rm_eo - matches[1].rm_so);
+        char match[matchSize];
+        strncpy(match, timeString + (int)matches[1].rm_so, matchSize);
+        printf("Match: %s\n", match);
+        return atoi(match);
+    }
+    return -1;
+}
+
+//only pass in single time as timeString
+void populateLineDate(lineDate* time, char* timeString)
+{
+    char* hourPattern = "^([0-9]{1,2}):?| ([0-9]{2}):";
+    char* minutePattern = "[0-9]{1,2}:([0-9]{2}):?";
+    char* secondPattern = "[0-9]{1,2}:[0-9]{2}:([0-9]{2})";
+    time->hour = matchAndParseInt(timeString, hourPattern);
+    if(time->hour != -1)
+    {
+        time->minute = matchAndParseInt(timeString, minutePattern);
+        if(time->minute != -1)
+        {
+            time->second = matchAndParseInt(timeString, secondPattern);
+        }
+    }
+}
+
 void buildLineDate(lineDate* myDate, char* inputTimeString)
 {
     myDate = (lineDate*) malloc(sizeof(lineDate));
@@ -39,38 +78,6 @@ void buildLineDate(lineDate* myDate, char* inputTimeString)
     free(firstDate);
 }
 
-//only pass in single time as timeString
-int populateLineDate(lineDate* time, char* timeString)
-{
-    time->hour = 0;
-    char *pattern = "([0-9]{1,2}):([0-9]{2}):([0-9]{2})|([0-9]{1,2}):([0-9]{2})";
-    regex_t re;
-    regmatch_t matches[4];
-    int rangeOffset;
-
-    if(regcomp(&re, pattern, REG_EXTENDED) != 0)
-    {
-        printf("Failed to compile regex");
-        return 1;
-    }
-
-    char *newTime = "10:11";
-
-    if(regexec(&re, newTime, 4, matches, 0) != 0)
-    {
-        printf("Failed to match regex");
-        return 1;
-    }
-    else
-    {
-        int i;
-        for(i = 1;i < 4;i++)
-        {
-            printf("%.*s\n", (int)(matches[i].rm_eo - matches[i].rm_so), &newTime[matches[i].rm_so]);
-        }
-    }
-    return 0;
-}
 
 int isRange(char* inputTime, int* offset)
 {
@@ -92,10 +99,6 @@ int main(int argc, char* argv[])
     lineDate* date;
     date = (lineDate*) malloc(sizeof(lineDate));
 
-    char *test = "10";
-    int test2 = atoi(test);
-        printf("%i" , test2);
-
     if(argc == 1)
     {
         printf("I need at least a timestamp to look for\n");
@@ -114,10 +117,12 @@ int main(int argc, char* argv[])
     }
     else
     {
-        printf("I need at least a timestamp to look for\n");
+        printf("Got a date in the first arg\n");
         return 1;
     }
     //printf("%i \n", date.hour);
+    free(date->secondDate);
+    free(date);
     return 0;
 }
 
