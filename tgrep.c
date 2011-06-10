@@ -36,7 +36,7 @@ int matchAndParseInt(char* timeString, char* timePattern)
 //only pass in single time as timeString
 void populateLineDate(lineDate* time, char* timeString)
 {
-    char* hourPattern = "^([0-9]{1,2}):?| ([0-9]{2}):";
+    char* hourPattern = "^([0-9]{1,2}):?| ([0-9]{1,2}):";
     char* minutePattern = "[0-9]{1,2}:([0-9]{2}):?";
     char* secondPattern = "[0-9]{1,2}:[0-9]{2}:([0-9]{2})";
     time->hour = matchAndParseInt(timeString, hourPattern);
@@ -97,6 +97,7 @@ int isRange(char* inputTime, int* offset)
 int main(int argc, char* argv[])
 {
     lineDate date;
+    lineDate readDate;
     char* filename;
     int errno;
 
@@ -145,7 +146,14 @@ int main(int argc, char* argv[])
     {
         printf("Error opening file: ERRNO %i\n", errno);
     }
-    printf("%s \n", filename);
+
+    char currentline[80];
+
+    fgets(currentline, 80, file);
+
+    printf("%s \n", currentline);
+    buildLineDate(&readDate, currentline);
+
     return 0;
 }
 
