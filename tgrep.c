@@ -26,7 +26,6 @@ int matchAndParseInt(char* timeString, char* timePattern)
         int matchSize = (int)(matches[1].rm_eo - matches[1].rm_so);
         char match[matchSize];
         strncpy(match, timeString + (int)matches[1].rm_so, matchSize);
-        printf("Match: %s\n", match);
         regfree(&re);
         return atoi(match);
     }
@@ -99,6 +98,7 @@ int main(int argc, char* argv[])
 {
     lineDate date;
     char* filename;
+    int errno;
 
     if(argc == 1)
     {
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
     }
 
     buildLineDate(&date, argv[1]);
-    printf("%i", date.hour);
+
     //first argument not a date
     if(date.hour == -1)
     {
@@ -137,6 +137,13 @@ int main(int argc, char* argv[])
         {
             filename = "sample.log";
         }
+    }
+
+    FILE *file = fopen(filename, "r");
+
+    if(file == NULL)
+    {
+        printf("Error opening file: ERRNO %i\n", errno);
     }
     printf("%s \n", filename);
     return 0;
