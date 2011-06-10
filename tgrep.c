@@ -53,7 +53,6 @@ void populateLineDate(lineDate* time, char* timeString)
 
 void buildLineDate(lineDate* myDate, char* inputTimeString)
 {
-    myDate = (lineDate*) malloc(sizeof(lineDate));
     int secondTimeOffset;
     char* firstDate;
     char* secondDate;
@@ -75,7 +74,7 @@ void buildLineDate(lineDate* myDate, char* inputTimeString)
         firstDate = (char*) malloc(strlen(inputTimeString));
         strcpy(firstDate, inputTimeString);
         populateLineDate(myDate, firstDate);
-        printf("first: %s\n", firstDate);
+        printf("first: %i\n", myDate->hour);
     }
     free(firstDate);
 }
@@ -98,8 +97,8 @@ int isRange(char* inputTime, int* offset)
 
 int main(int argc, char* argv[])
 {
-    lineDate* date;
-    date = (lineDate*) malloc(sizeof(lineDate));
+    lineDate date;
+    char* filename;
 
     if(argc == 1)
     {
@@ -107,24 +106,39 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    buildLineDate(date, argv[1]);
-    if(date->hour == -1 && argc > 2)
+    buildLineDate(&date, argv[1]);
+    printf("%i", date.hour);
+    //first argument not a date
+    if(date.hour == -1)
     {
-        buildLineDate(date, argv[2]);
-        if(date->hour == -1)
+        if(argc > 2)
         {
-            printf("Bad timestamp or no timestamp given.\n");
+            filename = argv[1];
+            buildLineDate(&date, argv[2]);
+            if(date.hour == -1)
+            {
+                printf("Bad timestamp or no timestamp given.\n");
+                return 1;
+            }
+        }
+        else
+        {
+            printf("I need at least a timestamp to look for\n");
             return 1;
         }
     }
-    else
+    else //first argument is a date
     {
-        printf("Got a date in the first arg\n");
-        return 1;
+        if(argc > 2)
+        {
+            filename = argv[2];
+        }
+        else
+        {
+            filename = "sample.log";
+        }
     }
-    //printf("%i \n", date.hour);
-    free(date->secondDate);
-    free(date);
+    printf("%s \n", filename);
     return 0;
 }
 
