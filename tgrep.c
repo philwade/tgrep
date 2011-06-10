@@ -27,8 +27,10 @@ int matchAndParseInt(char* timeString, char* timePattern)
         char match[matchSize];
         strncpy(match, timeString + (int)matches[1].rm_so, matchSize);
         printf("Match: %s\n", match);
+        regfree(&re);
         return atoi(match);
     }
+    regfree(&re);
     return -1;
 }
 
