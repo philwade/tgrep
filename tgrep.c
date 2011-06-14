@@ -83,6 +83,7 @@ void buildLineDate(lineDate* myDate, char* inputTimeString)
         secondDate = (char*) malloc(secondTimeOffset + 1);
         strcpy(firstDate, inputTimeString+secondTimeOffset);
         strncpy(secondDate, inputTimeString, --secondTimeOffset);
+        secondDate[secondTimeOffset] = '\0';
         populateLineDate(myDate, firstDate);
         populateLineDate(myDate->secondDate, secondDate);
         printf("first: %s, second %s\n", firstDate, secondDate);
