@@ -79,8 +79,8 @@ void buildLineDate(lineDate* myDate, char* inputTimeString)
 
     if(isRange(inputTimeString, &secondTimeOffset) != 0)
     {
-        firstDate = (char*) malloc((strlen(inputTimeString) - secondTimeOffset) + 1);
-        secondDate = (char*) malloc(secondTimeOffset + 1);
+        firstDate = malloc((strlen(inputTimeString) - secondTimeOffset) + 1);
+        secondDate =  malloc(secondTimeOffset + 1);
         strcpy(firstDate, inputTimeString+secondTimeOffset);
         strncpy(secondDate, inputTimeString, --secondTimeOffset);
         secondDate[secondTimeOffset] = '\0';
