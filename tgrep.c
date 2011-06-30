@@ -99,6 +99,31 @@ void buildLineDate(lineDate* myDate, char* inputTimeString)
     free(firstDate);
 }
 
+int lessThanDate(lineDate* search, lineDate* current)
+{
+    if(search->hour < current->hour)
+    {
+        return 1;
+    }
+    else if(search->hour == current->hour)
+    {
+        if(search->minute == -1 || search->minute < current->minute)
+        {
+            return 1;
+        }
+        else if(search->minute == current->minute)
+        {
+            if(search->second == -1 || search->second < current->second)
+            {
+                return 1;
+            }
+        }
+
+    }
+
+    return 0;
+}
+
 
 int isRange(char* inputTime, int* offset)
 {
@@ -177,6 +202,8 @@ int main(int argc, char* argv[])
     printf("%s \n", currentline);
     buildLineDate(&readDate, currentline);
     printLineDate(&readDate);
+
+    printf("%i \n", lessThanDate(&date, &readDate));
 
     return 0;
 }
