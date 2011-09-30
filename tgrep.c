@@ -189,6 +189,13 @@ int main(int argc, char* argv[])
     }
 
     FILE *file = fopen(filename, "r");
+    int fileSize;
+    fseek(file, 0L, SEEK_END); //seek to end
+    fileSize = ftell(file); //then ask where we are to get file size
+
+    fseek(file, fileSize / 2, SEEK_SET);
+
+    printf("%i\n", fileSize);
 
     if(file == NULL)
     {
