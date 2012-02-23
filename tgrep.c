@@ -51,6 +51,7 @@ void printLineDate(lineDate* time)
     else
     {
         printf("Bad date given\n");
+        exit(0);
     }
 }
 
@@ -124,6 +125,36 @@ int lessThanDate(lineDate* search, lineDate* current)
     return 0;
 }
 
+int equalDate(lineDate* search, lineDate* current)
+{
+    if(search->hour == current->hour)
+    {
+        if(search->minute == -1)
+        {
+            return 1;
+        }
+        else
+        {
+            if(search->minute == current->minute)
+            {
+                if(search->second == -1)
+                {
+                    return 1;
+                }
+                else
+                {
+                    if(search->second == current->second)
+                    {
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
 
 int isRange(char* inputTime, int* offset)
 {
@@ -190,10 +221,14 @@ int main(int argc, char* argv[])
 
     FILE *file = fopen(filename, "r");
     int fileSize;
+    int currentPosition;
+    int done = 0;
     fseek(file, 0L, SEEK_END); //seek to end
     fileSize = ftell(file); //then ask where we are to get file size
 
     fseek(file, fileSize / 2, SEEK_SET);
+
+    currentPosition = fileSize / 2;
 
     printf("%i\n", fileSize);
 
@@ -204,13 +239,34 @@ int main(int argc, char* argv[])
 
     char currentline[80];
 
-    fgets(currentline, 80, file);
+    while(!done)
+    {
 
-    printf("%s \n", currentline);
-    buildLineDate(&readDate, currentline);
-    printLineDate(&readDate);
+        fgets(currentline, 80, file);
 
-    printf("%i \n", lessThanDate(&date, &readDate));
+        printf("%s \n", currentline);
+        buildLineDate(&readDate, currentline);
+        printLineDate(&readDate);
+
+        if(equalDate(&date, &readDate))
+        {
+            done = 1;
+        }
+
+        if(lessThanDate(&date, &readDate)) 
+        {
+            fseek(file, currentPosition / 2, SEEK_SET);
+            currentPosition = currentPosition / 2;
+        }
+        else
+        {
+            fseek(file, currentPosition + ((fileSize - currentPosition) / 2), SEEK_SET);
+            currentPosition = currentPosition + ((fileSize - currentPosition) / 2);
+        }
+
+    }
+
+
 
     return 0;
 }
